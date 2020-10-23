@@ -8,14 +8,22 @@ import java.util.Map;
 
 public class News {
 	
-	private final Map<Integer, Story> stories = new HashMap<>();
-	private final Map<String, List<Integer>> authors = new HashMap<>();
+	// maps storyIDs to Story objects
+	private final Map<Integer, Story> storiesMap = new HashMap<>();
+	
+	// maps authors to lists of storyIDs ( List<storyID> )
+	private final Map<String, List<Integer>> authorsMap = new HashMap<>();
+	
+	// maps tags to lists of storyIDs 
+	private final Map<String, List<Integer>> tagsMap = new HashMap<>();
+	
+	// lists storyIDs in a descending order of number of views
 	private final List<Integer> mostRead = new ArrayList<Integer>();
 	
 	
 	public int nextID() 
 	{
-		return stories.keySet().stream().mapToInt(n -> n).max().orElse(-1) + 1;
+		return storiesMap.keySet().stream().mapToInt(n -> n).max().orElse(-1) + 1;
 	}
 	
 	public void addStory(String author, String title, String text, String[] tags) {
@@ -23,25 +31,39 @@ public class News {
 		Story story = new Story(author, title, text, tags);
 		
 		int nextID = nextID();
-		stories.put(nextID, story);
+		storiesMap.put(nextID, story);
 		
-		//update authors map
-		if (authors.get(author) != null)
+		// update authors map
+		if (authorsMap.get(author) != null)
 		{
-			List<Integer> s = authors.get(author);
+			List<Integer> s = authorsMap.get(author);
 			s.add(nextID);
-			authors.replace(author, s);
+			
 		}else {
-			authors.put(author, new ArrayList<Integer>(Arrays.asList(nextID)));
+			authorsMap.put(author, new ArrayList<Integer>(Arrays.asList(nextID)));
 		}
+		
+		// update tags map
+		for (String tag: tags)
+		{
+			if (tagsMap.get(tag) != null)
+			{
+				List<Integer> s = tagsMap.get(tag);
+				s.add(nextID);
+				
+			}else {
+				tagsMap.put(tag, new ArrayList<Integer>(Arrays.asList(nextID)));
+			}			
+		}
+
 		
 	}
 	
 	public void markStoryAsRead(int storyID) 
 	{
-		if (stories.get(storyID) != null)
+		if (storiesMap.get(storyID) != null)
 		{
-			stories.get(storyID).read();
+			storiesMap.get(storyID).read();
 			
 			if (mostRead.size() == 0)
 			{
@@ -58,7 +80,7 @@ public class News {
 				// insert it maintaining the descending order of the number of reads
 				for (int i = 0; i < mostRead.size(); i++)
 				{
-					if (stories.get(storyID).getTimesRead() > stories.get(mostRead.get(i)).getTimesRead())
+					if (storiesMap.get(storyID).getTimesRead() > storiesMap.get(mostRead.get(i)).getTimesRead())
 					{
 						mostRead.add(i, storyID); //the rest of the indices will be moved to the left
 						break;
@@ -78,11 +100,12 @@ public class News {
 	
 	public void displayTopTenNews()
 	{
+		System.out.println("TOP 10 NEWS" + "\n");
 		int i = 0;
 		while (i < mostRead.size())
 		{
 			int index = mostRead.get(i);
-			stories.get(index).printStory();	
+			storiesMap.get(index).printStory();	
 			++i;
 		}
 
@@ -91,17 +114,68 @@ public class News {
 	
 	public void displayStoriesForAuthor(String author)
 	{
-		List<Integer> s = authors.get(author);
+		List<Integer> s = authorsMap.get(author);
 		for (int index: s)
 		{
-			stories.get(index).printStory();
+			storiesMap.get(index).printStory();
 		}
 		
 	}
 	
 	public void displayStoriesForTags(String[] tags)
 	{
+		// key = storyID, value = num of matches
+		Map<Integer, Integer> matches = new HashMap<>();
 		
+		for (String tag: tags)
+		{
+			for (int i: tagsMap.get(tag))
+			{
+				if (matches.get(i) == null)
+				{
+					matches.put(i, 1);
+				}
+				else
+				{
+					int f = matches.get(i);
+					matches.replace(i, f+1);
+				}
+			}
+		}
+		
+		// storyIDs
+		List<Integer> stories = new ArrayList<>();
+		for (Map.Entry<Integer, Integer> entry : matches.entrySet()) {
+		    if (!stories.contains(entry.getKey()))
+		    {
+		    	stories.add(entry.getKey());
+		    }
+		    else
+		    {
+		    	stories.remove(stories.indexOf(entry.getKey()));
+		    	for (int i = 0; i < stories.size(); i++)
+		    	{
+		    		if (entry.getValue() > matches.get(stories.get(i)))
+		    		{
+		    			stories.add(i, entry.getKey());
+		    			break;
+		    		}
+		    	}
+		    	if (!stories.contains(entry.getKey()))
+		    	{
+		    		stories.add(entry.getKey());
+		    	}
+		    }
+		}
+		
+		// print stories
+		
+		for (int i: stories)
+		{
+			storiesMap.get(i).printStory();
+		}
+		
+
 	}
 	
 	public static void main(String[] args)
@@ -123,7 +197,8 @@ public class News {
 		news.markStoryAsRead(1);
 		
 		//news.displayTopTenNews();
-		news.displayStoriesForAuthor("Joanna");
+		//news.displayStoriesForAuthor("Joanna");
+		news.displayStoriesForTags(new String[] {"sad"});
 		
 		
 	}
