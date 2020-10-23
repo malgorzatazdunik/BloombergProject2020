@@ -107,6 +107,7 @@ public class News {
 			int index = mostRead.get(i);
 			storiesMap.get(index).printStory();	
 			++i;
+			if (i == 10) break;
 		}
 
 		
@@ -191,6 +192,7 @@ public class News {
 		String text = "ABC";
 		String[] tags = {"happy", "sad"};
 		
+		
 		news.addStory(author, title, text, tags);
 		news.addStory("Joanna", "Painting", "DEF", new String[] {"art", "work"});
 		news.addStory("Kat", "Cooking", "GHI", new String[] {"work", "food", "hobby"});
@@ -216,6 +218,11 @@ public class News {
 		news.markStoryAsRead(5);
 		news.markStoryAsRead(5);
 		news.markStoryAsRead(6);
+		news.markStoryAsRead(7);
+		news.markStoryAsRead(8);
+		news.markStoryAsRead(9);
+		news.markStoryAsRead(10);
+		news.markStoryAsRead(11);
 		
 		
 		news.displayTopTenNews();

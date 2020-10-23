@@ -19,7 +19,6 @@ public class Story {
 		this.content = _content;
 		this.tags = _tags;
 		// do: set date to current time, and getter for date
-		// + timesRead needs to be updated each time it's read
 		this.timesRead = 0;
 	}
 
