@@ -100,13 +100,14 @@ public class News {
 	
 	public void displayTopTenNews()
 	{
-		System.out.println("TOP 10 NEWS" + "\n");
+		System.out.println("*TOP 10 NEWS*" + "\n");
 		int i = 0;
 		while (i < mostRead.size())
 		{
 			int index = mostRead.get(i);
 			storiesMap.get(index).printStory();	
 			++i;
+			if (i == 10) break;
 		}
 
 		
@@ -114,6 +115,7 @@ public class News {
 	
 	public void displayStoriesForAuthor(String author)
 	{
+		System.out.println("*STORIES BY AUTHOR: " + author + "*\n");
 		List<Integer> s = authorsMap.get(author);
 		for (int index: s)
 		{
@@ -124,8 +126,14 @@ public class News {
 	
 	public void displayStoriesForTags(String[] tags)
 	{
+		System.out.println("*STORIES WITH TAGS: " + Arrays.toString(tags)+"*\n");
 		// key = storyID, value = num of matches
 		Map<Integer, Integer> matches = new HashMap<>();
+		
+		/*
+		 * for each tag, check the map of tags for ids of stories; Every time the story is already in the map of matches, 
+		 * add to the number of matches
+		 */
 		
 		for (String tag: tags)
 		{
@@ -143,29 +151,27 @@ public class News {
 			}
 		}
 		
+		/*
+		 * Create a new list of stories and iterate the entry set to add stories to the list in descending order of matches 
+		 */
+		
 		// storyIDs
 		List<Integer> stories = new ArrayList<>();
-		for (Map.Entry<Integer, Integer> entry : matches.entrySet()) {
-		    if (!stories.contains(entry.getKey()))
-		    {
-		    	stories.add(entry.getKey());
-		    }
-		    else
-		    {
-		    	stories.remove(stories.indexOf(entry.getKey()));
-		    	for (int i = 0; i < stories.size(); i++)
-		    	{
-		    		if (entry.getValue() > matches.get(stories.get(i)))
-		    		{
-		    			stories.add(i, entry.getKey());
-		    			break;
-		    		}
-		    	}
-		    	if (!stories.contains(entry.getKey()))
-		    	{
-		    		stories.add(entry.getKey());
-		    	}
-		    }
+		int max = 0;
+		for (Map.Entry<Integer, Integer> entry : matches.entrySet())
+		{
+			if (stories.size() == 0) stories.add(entry.getKey());
+			else {
+				for (int i = 0; i < stories.size(); i++)
+				{
+					if (entry.getValue() > matches.get(stories.get(i)))
+					{
+						stories.add(i, entry.getKey());
+						break;
+					}
+					if(!stories.contains(entry.getKey())) stories.add(entry.getKey()); // add to the end;
+				}
+			}
 		}
 		
 		// print stories
@@ -186,19 +192,42 @@ public class News {
 		String text = "ABC";
 		String[] tags = {"happy", "sad"};
 		
+		
 		news.addStory(author, title, text, tags);
 		news.addStory("Joanna", "Painting", "DEF", new String[] {"art", "work"});
+		news.addStory("Kat", "Cooking", "GHI", new String[] {"work", "food", "hobby"});
+		news.addStory("Michael", "Hello World", "JKL", new String[] {"code", "hobby", "lala"});
+		news.addStory("Stephen King", "Green Mile", "TEXT OF GREEN MILE", new String[] {"art", "fiction", "horror", "books"});
+		news.addStory("THEROUX", "WEIRD WEEKENDS", "TV SHOW LOUIS THEORUX BLAH BLAH", new String[] {"theroux", "tv", "BBC"});
+		news.addStory("Hacker", "Cracking the coding interview", "Study study study", new String[] {"code", "books", "hobby"});
+		news.addStory("Michael", "Hello World 2", "MNO", new String[] {"work", "hobby", "code"});
+		news.addStory("Michael", "Hello World 3", "PQR", new String[]{"xyz", "code"});
+		news.addStory("Hacker", "OOP", "Something SOmething", new String[] {});
+		news.addStory("SSSSSSSSSS", "ZZZZZZZZZZZZZ", "OOOOOOOO", new String[] {});
 
-//		news.stories.get(0).printStory();
-//		news.stories.get(1).printStory();
 		
 		news.markStoryAsRead(0);
 		news.markStoryAsRead(1);
 		news.markStoryAsRead(1);
+		news.markStoryAsRead(2);
+		news.markStoryAsRead(6);
+		news.markStoryAsRead(6);
+		news.markStoryAsRead(6);
+		news.markStoryAsRead(3);
+		news.markStoryAsRead(4);
+		news.markStoryAsRead(5);
+		news.markStoryAsRead(5);
+		news.markStoryAsRead(6);
+		news.markStoryAsRead(7);
+		news.markStoryAsRead(8);
+		news.markStoryAsRead(9);
+		news.markStoryAsRead(10);
+		news.markStoryAsRead(11);
 		
-		//news.displayTopTenNews();
-		//news.displayStoriesForAuthor("Joanna");
-		news.displayStoriesForTags(new String[] {"sad"});
+		
+		news.displayTopTenNews();
+		//news.displayStoriesForAuthor("Michael");
+		//news.displayStoriesForTags(new String[] {"books", "code", "hobby", "lala"});
 		
 		
 	}

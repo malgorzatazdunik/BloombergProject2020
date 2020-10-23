@@ -1,5 +1,6 @@
 package news;
 
+import java.util.Arrays;
 import java.util.Date;
 
 public class Story {
@@ -18,7 +19,6 @@ public class Story {
 		this.content = _content;
 		this.tags = _tags;
 		// do: set date to current time, and getter for date
-		// + timesRead needs to be updated each time it's read
 		this.timesRead = 0;
 	}
 
@@ -50,6 +50,7 @@ public class Story {
 	public void printStory() {
 		System.out.println("Author: " + author + ", Title: " + title + ", Views: " + timesRead);
 		System.out.println("\n" + content + "\n");
+		System.out.println(Arrays.toString(tags));
 		System.out.println("-----------------------------------------------");
 	}
 
