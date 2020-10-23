@@ -1,5 +1,6 @@
 package news;
 
+import java.util.Arrays;
 import java.util.Date;
 
 public class Story {
@@ -50,6 +51,7 @@ public class Story {
 	public void printStory() {
 		System.out.println("Author: " + author + ", Title: " + title + ", Views: " + timesRead);
 		System.out.println("\n" + content + "\n");
+		System.out.println(Arrays.toString(tags));
 		System.out.println("-----------------------------------------------");
 	}
 
