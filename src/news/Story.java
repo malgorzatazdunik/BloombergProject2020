@@ -1,15 +1,13 @@
 package news;
 
 import java.util.Arrays;
-//import java.util.Date;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class Story {
 	
-	private String author;
-	private String title;
-	private String content;
+	private String author, title, content, date;
 	private String[] tags;
-	//private Date date;
 	private int timesRead;
 	
 	Story(String _author, String _title, String _content, String[] _tags)
@@ -19,7 +17,11 @@ public class Story {
 		this.content = _content;
 		this.tags = _tags;
 		this.timesRead = 0;
-		// do: set date to current time, and getter for date
+		
+		Date date = new Date();
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		this.date = formatter.format(date);
 	}
 
 	public String getAuthor() {
@@ -47,10 +49,15 @@ public class Story {
 		return timesRead;
 	}
 	
+	public String getDate() {
+		
+		return date;
+	}
+	
 	public void printStory() {
 		System.out.println("Author: " + author + ", Title: " + title + ", Views: " + timesRead);
 		System.out.println("\n" + content + "\n");
-		System.out.println(Arrays.toString(tags));
+		System.out.println(date + " " + Arrays.toString(tags));
 		System.out.println("-----------------------------------------------");
 	}
 
