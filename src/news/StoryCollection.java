@@ -2,6 +2,7 @@ package news;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class StoryCollection {
 	/*
@@ -31,6 +32,13 @@ public class StoryCollection {
 	{
 		return storiesMap.get(storyID);
 	}
+	
+	Set<Integer> getKeySet()
+	{
+		return storiesMap.keySet();
+	}
+	
+	
 	
 	
 

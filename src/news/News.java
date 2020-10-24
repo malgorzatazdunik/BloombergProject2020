@@ -2,6 +2,8 @@ package news;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +15,6 @@ public class News {
 	private final Map<String, List<Integer>> authorsMap = new HashMap<>();
 	
 	private final Map<String, List<Integer>> tagsMap = new HashMap<>();
-	
-	private final List<Integer> mostRead = new ArrayList<Integer>();
 	
 	
 	public void addStory(String author, String title, String text, String[] tags) {
@@ -55,53 +55,42 @@ public class News {
 	
 	public void markStoryAsRead(int storyID) 
 	{
+		
 		if (stories.getStory(storyID) != null)
 		{
 			stories.getStory(storyID).read();
-			
-			if (mostRead.size() == 0)
-			{
-				mostRead.add(storyID);
-				return;
-			}
-				
-			// if it's already in the list
-			if (mostRead.contains(storyID))
-			{
-				//remove it from the list
-				mostRead.remove(mostRead.indexOf(storyID));
-				
-				// insert it maintaining the descending order of the number of reads
-				for (int i = 0; i < mostRead.size(); i++)
-				{
-					if (stories.getStory(storyID).getTimesRead() > stories.getStory(mostRead.get(i)).getTimesRead())
-					{
-						mostRead.add(i, storyID); //the rest of the indices will be moved to the left
-						break;
-					}				
-				}
-				// if it wasn't inserted
-				if (!mostRead.contains(storyID)) mostRead.add(storyID); // add to the end
-			}
-			else { // add it to the end
-				mostRead.add(storyID);
-			}			
-				
 		}
-		else System.out.println("Story doesn't exist");
 
 	}
 	
 	public void displayTopTenNews()
 	{
 		System.out.println("****************************** TOP 10 NEWS ******************************" + "\n");
-		int i = 0;
-		while (i < mostRead.size())
+		
+		/*
+		 * Create a list from keySet of stories, and sort it by corresponding numbers of times read from story object
+		 */
+		List<Integer> mostRead = new ArrayList<Integer>(stories.getKeySet());
+		
+		Collections.sort(mostRead, new Comparator<Integer>() {
+			public int compare(Integer left, Integer right)
+			{
+				int compare = stories.getStory(left).getTimesRead() - stories.getStory(right).getTimesRead();
+				if (compare == 0) return left.compareTo(right);
+				return compare;
+			}
+		});
+		
+		/*
+		 * print the last ten stories (that were read the most often)
+		 */
+		int i = mostRead.size()-1;
+		while (i >= 0)
 		{
 			int index = mostRead.get(i);
 			stories.getStory(index).printStory();	
-			++i;
-			if (i == 10) break;
+			--i;
+			if (i == mostRead.size()-11) break;
 		}
 	}
 	
@@ -121,7 +110,7 @@ public class News {
 		System.out.println("****************** STORIES WITH TAGS: " + Arrays.toString(tags)+" ******************\n");
 		// key = storyID, value = num of matches
 		Map<Integer, Integer> matches = new HashMap<>();
-		List<Integer> matchedStoriesList = new ArrayList<>();
+		
 		
 		/*
 		 * for each tag, check the map of tags for ids of stories; Every time the story is already in the map of matches, 
@@ -132,6 +121,7 @@ public class News {
 		{
 			for (int i: tagsMap.get(tag))
 			{
+				
 				if (matches.get(i) == null)
 				{
 					matches.put(i, 1);
@@ -145,30 +135,28 @@ public class News {
 		}
 		
 		/*
-		 * Create a new list of stories and iterate the entry set to add stories to the list in descending order of matches 
+		 * Add all story Ids to the list, and sort it by corresponding values from the matches map (number of tags matched)
 		 */
 		
-		for (Map.Entry<Integer, Integer> entry : matches.entrySet())
-		{
-			if (matchedStoriesList.size() == 0) matchedStoriesList.add(entry.getKey());
-			else {
-				for (int i = 0; i < matchedStoriesList.size(); i++)
-				{
-					if (entry.getValue() > matches.get(matchedStoriesList.get(i)))
-					{
-						matchedStoriesList.add(i, entry.getKey());
-						break;
-					}
-					if(!matchedStoriesList.contains(entry.getKey())) matchedStoriesList.add(entry.getKey()); // add to the end;
-				}
+		List<Integer> matchedStoriesList = new ArrayList<Integer>(matches.keySet());
+		
+		Collections.sort(matchedStoriesList, new Comparator<Integer>() {
+			public int compare(Integer left, Integer right)
+			{
+				int compare = matches.get(left) - matches.get(right);
+				if (compare == 0) return left.compareTo(right);
+				return compare;
 			}
-		}
+		});
+			
 		
-		// print stories
+		/*
+		 * Print the list in reverse (the most matched stories in the beginning
+		 */
 		
-		for (int i: matchedStoriesList)
+		for (int i = matchedStoriesList.size()-1; i >= 0; i--)
 		{
-			stories.getStory(i).printStory();
+			stories.getStory(matchedStoriesList.get(i)).printStory();
 		}
 		
 

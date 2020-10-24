@@ -37,8 +37,8 @@ public class Main {
 		
 		
 		news.displayTopTenNews();
-		news.displayStoriesForAuthor("Michael");
-		news.displayStoriesForTags(new String[] {"books", "code", "hobby", "lala"});
+		//news.displayStoriesForAuthor("Michael");
+		//news.displayStoriesForTags(new String[] {"hobby", "code", "lala"});
 		
 		
 	}
