@@ -5,7 +5,6 @@ public class Main {
 	{
 		News news = new News();
 		
-		
 		news.addStory("Malgorzata", "Coding", "ABC", new String[] {"happy", "sad"});
 		news.addStory("Joanna", "Painting", "DEF", new String[] {"art", "work"});
 		news.addStory("Kat", "Cooking", "GHI", new String[] {"work", "food", "hobby"});

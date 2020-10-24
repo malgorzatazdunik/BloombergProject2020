@@ -94,7 +94,7 @@ public class News {
 	
 	public void displayTopTenNews()
 	{
-		System.out.println("****************** TOP 10 NEWS ******************" + "\n");
+		System.out.println("****************************** TOP 10 NEWS ******************************" + "\n");
 		int i = 0;
 		while (i < mostRead.size())
 		{
@@ -103,13 +103,11 @@ public class News {
 			++i;
 			if (i == 10) break;
 		}
-
-		
 	}
 	
 	public void displayStoriesForAuthor(String author)
 	{
-		System.out.println("****************** STORIES BY AUTHOR: " + author + " ******************\n");
+		System.out.println("************************** STORIES BY AUTHOR: " + author + " **************************\n");
 		List<Integer> s = authorsMap.get(author);
 		for (int index: s)
 		{
