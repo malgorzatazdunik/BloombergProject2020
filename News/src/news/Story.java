@@ -1,7 +1,7 @@
 package news;
 
 import java.util.Arrays;
-import java.util.Date;
+//import java.util.Date;
 
 public class Story {
 	
@@ -9,7 +9,7 @@ public class Story {
 	private String title;
 	private String content;
 	private String[] tags;
-	private Date date;
+	//private Date date;
 	private int timesRead;
 	
 	Story(String _author, String _title, String _content, String[] _tags)
@@ -18,8 +18,8 @@ public class Story {
 		this.title = _title;
 		this.content = _content;
 		this.tags = _tags;
-		// do: set date to current time, and getter for date
 		this.timesRead = 0;
+		// do: set date to current time, and getter for date
 	}
 
 	public String getAuthor() {
