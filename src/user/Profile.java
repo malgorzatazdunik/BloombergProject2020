@@ -1,4 +1,10 @@
-package Data;
+package user;
+//package Data;
+import calendar.Meeting;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Profile {
   private long id;
@@ -38,9 +44,12 @@ public class Profile {
     return phoneNumber;
   }
 
+  public long getId() {
+    return id;
+  }
+
   public Map<Date, ArrayList<Meeting>> getCalendar() {
     return calendar;
   }
 
-  public boolean checkDay
 }

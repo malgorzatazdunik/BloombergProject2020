@@ -1,3 +1,4 @@
+package calendar;
 import java.util.Comparator;
 
 public class MeetingComparator implements Comparator<Meeting> {

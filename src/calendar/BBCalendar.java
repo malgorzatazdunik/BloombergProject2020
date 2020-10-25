@@ -1,3 +1,5 @@
+package calendar;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -5,8 +7,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.text.SimpleDateFormat;
 
+import user.Profile;
+import user.User;
+
+
+
 
 public class BBCalendar {
+  private User userDB;
+  // User database that stores all the profiles
+
+  public BBCalendar(User userDB) {
+    this.userDB = userDB;
+  }
 
   // Helper methods
 
@@ -20,14 +33,19 @@ public class BBCalendar {
     }
   }
 
+  private String getStringDate(Date fullDate) {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    return sdf.format(fullDate);
+  }
+
   // Maps date time to string time, 24 hour format
-  public String getPlainTime(Date fullDate) {
+  private String getStringTime(Date fullDate) {
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     return sdf.format(fullDate);
   }
 
   // Maps string time to number of minutes
-  public int parseTime(String time) {
+  private int parseTime(String time) {
     int hour;
     int min;
     if (time.length() == 5) {
@@ -41,7 +59,7 @@ public class BBCalendar {
   }
 
   // Maps number of minutes to string time
-  public String unparseTime(int time) {
+  private String unparseTime(int time) {
     int hour = time / 60;
     int minutes = time % 60;
     if (minutes < 10) {
@@ -51,19 +69,21 @@ public class BBCalendar {
   }
 
   // Returns a set of minutes to represent slots that are full
-  public HashSet<Integer> getFilledSlots(ArrayList<Meeting> meetings) {
+  private HashSet<Integer> getFilledSlots(ArrayList<Meeting> meetings) {
     HashSet<Integer> times = new HashSet<Integer>();
 
-    for (Meeting m: meetings) {
-      Integer start = parseTime(getPlainTime(m.getStartTime()));
-      Integer end = parseTime(getPlainTime(m.getEndTime()));
+    if (meetings != null) {
+      for (Meeting m: meetings) {
+        Integer start = parseTime(getStringTime(m.getStartTime()));
+        Integer end = parseTime(getStringTime(m.getEndTime()));
 
-      while (start < end) {
-        times.add(start);
-        start += 30;
+        while (start < end) {
+          times.add(start);
+          start += 30;
+        }
       }
     }
-
+    
     return times;
   }
 
@@ -75,18 +95,13 @@ public class BBCalendar {
     for (Profile user: listOfUsers) {
       Meeting meeting = new Meeting(startTime, endTime, topic);
       Date day = meeting.getCalendarDay();
-      ArrayList<Meeting> allMeetings;
-      
-      if (user.calendar.containsKey(day)) {
-        allMeetings = user.calendar.get(day);
-        allMeetings.add(meeting);
-        Collections.sort(allMeetings, new MeetingComparator());
-      } else {
-        allMeetings = new ArrayList<Meeting>();
-        allMeetings.add(meeting);
-      }
+      ArrayList<Meeting> allMeetings = user.getCalendar().getOrDefault(day, new ArrayList<Meeting>());
 
-      user.calendar.put(day, allMeetings);
+      allMeetings.add(meeting);
+      Collections.sort(allMeetings, new MeetingComparator());
+      
+      user.getCalendar().put(day, allMeetings);
+      System.out.println("Added meeting on " + getStringDate(startTime) + " for user " + user.getName() + "\n");
     }
   }
 
@@ -103,16 +118,24 @@ public class BBCalendar {
   /* 3) displays all the meetings the user has for a given day in a nice
   organized way (from earliest meeting to the latest).*/
   public void displayUsersCalendarForGivenDay(Long userID, Date calendarDay) {
-    Profile user = Profile.getUser(userID); // !!!! BROKEN, NEED TO MERGE FOR IT TO WORK !!
+
+    Profile user = userDB.getProfileByUserID(userID);
+    
+    if (user == null) {
+      System.out.println("User does not exist.\n");
+      return;
+    }
+
     calendarDay = getPlainDate(calendarDay);
     // In case the date given has a set time, we reset it
-    ArrayList<Meeting> allMeetings = user.calendar.get(calendarDay);
+    ArrayList<Meeting> allMeetings = user.getCalendar().get(calendarDay);
 
+    System.out.println("User: " + user.getName());
     if (allMeetings != null) {
-      System.out.println("Meetings Today:");
+      System.out.println("Meetings on " + getStringDate(calendarDay) +":");
       for (Meeting meeting: allMeetings) {
-        System.out.println("Starting Time: " + getPlainTime(meeting.getStartTime()));
-        System.out.println("End Time: " + getPlainTime(meeting.getEndTime()));
+        System.out.println("Starting Time: " + getStringTime(meeting.getStartTime()));
+        System.out.println("End Time: " + getStringTime(meeting.getEndTime()));
         System.out.println("Topic: " + meeting.getTopic() + "\n");
       }
     } else {
@@ -150,16 +173,23 @@ time slot is available for all of the users. */
     ArrayList<Meeting> allMeetings;
     HashSet<Integer> filledSlots = new HashSet<Integer>();
 
+
     for (Long id: listOfuserID) {
-      user = Profile.getUser(id);
+      user = userDB.getProfileByUserID(id);
+
+      if (user == null) {
+        System.out.println("A user given does not exist.");
+        return;
+      }
+
       calendarDay = getPlainDate(calendarDay);
       // In case the date given has a set time, we reset it
-      allMeetings = user.calendar.get(calendarDay);
+
+      allMeetings = user.getCalendar().get(calendarDay);
       filledSlots.addAll(getFilledSlots(allMeetings));
     }
     // Creates an union of the filled slots for all members of the list
     // A slot that conflicts with any single members' schedule will be in the set
-    
 
 
     int slotsToCheck;
@@ -168,7 +198,6 @@ time slot is available for all of the users. */
 
     // Stores a copy of start, that we use to check following slots, so we don't lose the original value of start
     int tempStart;
-    
 
     // while start <= the final time possible to start a meeting
     while (start <= end) {
@@ -208,6 +237,45 @@ time slot is available for all of the users. */
       System.out.println("No slots available.");
     }
     System.out.println();
+  }
+
+  public static void main(String[] args) {
+    User userDatabase = new User();
+
+    userDatabase.addNewUserProfile("a", "", "");
+    userDatabase.addNewUserProfile("b", "", "");
+    Profile player1 = userDatabase.getProfileByUserID(0L);
+    Profile player2 = userDatabase.getProfileByUserID(1L);
+
+
+    Profile[] list1 = {player1};
+    Profile[] list2 = {player2};
+    Long[] list3 = {0L, 1L};
+
+    Date d1 = new Date(120, 9, 24, 11, 30);
+    Date d2 = new Date(120, 9, 24, 12, 30);
+    Date d3 = new Date(120, 9, 24, 13, 30);
+    Date d4 = new Date(120, 9, 25, 13, 30);
+    Date d5 = new Date(120, 9, 25, 14, 30);
+    // month is 0 indexed
+
+    BBCalendar cal = new BBCalendar(userDatabase);
+    // Method 1
+    cal.addMeeting(list1, d1, d2, "p1 meeting");
+    cal.addMeeting(list2, d4, d5, "p2 meeting");
+    cal.addMeeting(list1, d2, d3, "p3 meeting");
+
+    // Method 2
+    cal.displayUsersDay(1l);
+
+    // Method 3
+    cal.displayUsersCalendarForGivenDay(0l, d1);
+
+    // Method 4
+    cal.meetingTimeSuggestion(1l, d1, "9:00", "15:00", 1);
+
+    // Method 5
+    cal.meetingTimeScheduler(list3, d1, "9:00", "15:00", 1);
   }
 
 

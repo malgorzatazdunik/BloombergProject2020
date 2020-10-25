@@ -1,3 +1,5 @@
+package calendar;
+
 import java.util.Date;
 
 public class Meeting {
