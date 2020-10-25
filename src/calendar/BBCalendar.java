@@ -128,7 +128,7 @@ public class BBCalendar {
 
     calendarDay = getPlainDate(calendarDay);
     // In case the date given has a set time, we reset it
-    ArrayList<Meeting> allMeetings = user.getCalendar().get(calendarDay);
+    ArrayList<Meeting> allMeetings = user.getMeetingsFromCalendar(calendarDay);
 
     System.out.println("User: " + user.getName());
     if (allMeetings != null) {
@@ -185,7 +185,7 @@ time slot is available for all of the users. */
       calendarDay = getPlainDate(calendarDay);
       // In case the date given has a set time, we reset it
 
-      allMeetings = user.getCalendar().get(calendarDay);
+      allMeetings = user.getMeetingsFromCalendar(calendarDay);
       filledSlots.addAll(getFilledSlots(allMeetings));
     }
     // Creates an union of the filled slots for all members of the list

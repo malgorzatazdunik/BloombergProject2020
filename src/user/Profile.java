@@ -1,5 +1,5 @@
 package user;
-//package Data;
+
 import calendar.Meeting;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,12 +44,12 @@ public class Profile {
     return phoneNumber;
   }
 
-  public long getId() {
-    return id;
-  }
-
   public Map<Date, ArrayList<Meeting>> getCalendar() {
     return calendar;
+  }
+
+  public ArrayList<Meeting> getMeetingsFromCalendar(Date day) {
+    return calendar.get(day);
   }
 
 }

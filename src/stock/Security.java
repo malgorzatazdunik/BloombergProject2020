@@ -1,5 +1,4 @@
 package stock;
-// package Data;
 
 import java.sql.Timestamp;
 import java.util.Comparator;
