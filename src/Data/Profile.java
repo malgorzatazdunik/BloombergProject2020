@@ -5,6 +5,7 @@ public class Profile {
   private String name;
   private String emailAddress;
   private String phoneNumber;
+  private Map<Date, ArrayList<Meeting>> calendar = new HashMap<Date, ArrayList<Meeting>>();
 
   public Profile(long id, String name, String emailAddress, String phoneNumber) {
     this.id = id;
@@ -36,4 +37,10 @@ public class Profile {
   public String getPhoneNumber() {
     return phoneNumber;
   }
+
+  public Map<Date, ArrayList<Meeting>> getCalendar() {
+    return calendar;
+  }
+
+  public boolean checkDay
 }

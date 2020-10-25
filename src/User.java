@@ -12,6 +12,10 @@ public class User {
     users.put(newUserID++, user);
   }
 
+  public Profile getProfileByUserID(long userID) {
+    return users.get(userID);
+  }
+
   public void displayUserProfile(long userID) {
     Profile user = users.get(userID);
     System.out.println("Information for user with ID " + userID);
