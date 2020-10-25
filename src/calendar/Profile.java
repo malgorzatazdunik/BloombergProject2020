@@ -1,29 +1,30 @@
-import java.util.Date;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Profile {
   // public as users can see each other's meetings
-  // !!add to profile
-  public HashMap<Date, ArrayList<Meeting>> calendar;
+  public HashMap<Date, ArrayList<Meeting>> calendar; // !! add to profile
 
-  // ignore below attributes
-  public String name;
-  private static Map<Long, Profile> users = new HashMap<>();  // static??
+  public String name; // ignore
+
+  private static Map<Long, Profile> users = new HashMap<>(); // ?? static to access it without creating an instance
 
   public Profile(long id, String name) {
     this.name = name; // ignore
-    this.calendar = new HashMap<Date, ArrayList<Meeting>>(); // need to add to actual profile
+    this.calendar = new HashMap<Date, ArrayList<Meeting>>(); // !! add to profile
     users.put(id, this); //ignore
   }
 
-  // need for BBcalendar methods
-  // !!add to USER CLASS and change bbcalender
+  // !! add to user CLASS
+  // static so we can use without creating instance?
   public static Profile getUser(Long userID) {
     return users.get(userID);
   }
 
+  // !! add to user class?
   public static void main(String[] args) {
     Profile player1 = new Profile(1, "ayesha");
     Profile player2 = new Profile(2, "manya");
@@ -37,23 +38,24 @@ public class Profile {
     Date d5 = new Date(120, 9, 25, 14, 30);
     // month is 0 indexed
 
+    BBCalendar cal = new BBCalendar();
     // Method 1
-    BBCalendar.addMeeting(list1, d1, d2, "p1 meeting");
-    BBCalendar.addMeeting(list1, d4, d5, "p2 meeting");
-    BBCalendar.addMeeting(list2, d2, d3, "p3 meeting");
+    cal.addMeeting(list1, d1, d2, "p1 meeting");
+    cal.addMeeting(list1, d4, d5, "p2 meeting");
+    cal.addMeeting(list2, d2, d3, "p3 meeting");
     
     // Method 2
-    BBCalendar.displayUsersDay(1L);
-    BBCalendar.displayUsersDay(2L);
+    cal.displayUsersDay(1L);
+    cal.displayUsersDay(2L);
 
     // Method 3
-    BBCalendar.displayUsersCalendarForGivenDay(1l, d4);
+    cal.displayUsersCalendarForGivenDay(1l, d4);
 
     // Method 4
-    BBCalendar.meetingTimeSuggestion(1l, d1, "9:00", "15:00", 1);
+    cal.meetingTimeSuggestion(1l, d1, "9:00", "15:00", 1);
 
     // Method 5
-    BBCalendar.meetingTimeScheduler(list3, d1, "9:00", "15:00", 1);
+    cal.meetingTimeScheduler(list3, d1, "9:00", "15:00", 1);
   }
 
 }

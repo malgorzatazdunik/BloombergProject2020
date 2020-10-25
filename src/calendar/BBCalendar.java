@@ -1,9 +1,9 @@
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Collections;
 
 
 public class BBCalendar {
@@ -21,13 +21,13 @@ public class BBCalendar {
   }
 
   // Maps date time to string time, 24 hour format
-  public static String getPlainTime(Date fullDate) {
+  public String getPlainTime(Date fullDate) {
     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
     return sdf.format(fullDate);
   }
 
   // Maps string time to number of minutes
-  public static int parseTime(String time) {
+  public int parseTime(String time) {
     int hour;
     int min;
     if (time.length() == 5) {
@@ -41,17 +41,17 @@ public class BBCalendar {
   }
 
   // Maps number of minutes to string time
-  public static String unparseTime(int time) {
+  public String unparseTime(int time) {
     int hour = time / 60;
     int minutes = time % 60;
-    if (minutes == 0) {
-      return hour + ":00";
+    if (minutes < 10) {
+      return hour + ":" + minutes + "0";
     }
     return hour + ":" + minutes;
   }
 
   // Returns a set of minutes to represent slots that are full
-  public static HashSet<Integer> getFilledSlots(ArrayList<Meeting> meetings) {
+  public HashSet<Integer> getFilledSlots(ArrayList<Meeting> meetings) {
     HashSet<Integer> times = new HashSet<Integer>();
 
     for (Meeting m: meetings) {
@@ -67,12 +67,11 @@ public class BBCalendar {
     return times;
   }
 
-
   // Actual methods:
 
   /* 1) add a meeting to all users calendars
   from listOfUsers with given startTime, endTime and topic. */
-  public static void addMeeting(Profile[] listOfUsers, Date startTime, Date endTime, String topic) {
+  public void addMeeting(Profile[] listOfUsers, Date startTime, Date endTime, String topic) {
     for (Profile user: listOfUsers) {
       Meeting meeting = new Meeting(startTime, endTime, topic);
       Date day = meeting.getCalendarDay();
@@ -91,10 +90,11 @@ public class BBCalendar {
     }
   }
 
+
   /* 2) displays all the meetings the user has for a current day in a nice
   organized way (from earliest meeting to the latest). Make sure to display
   the time and topic of each meeting.*/
-  public static void displayUsersDay(Long userID) {
+  public void displayUsersDay(Long userID) {
     Date today = getPlainDate(new Date());
     displayUsersCalendarForGivenDay(userID, today);
     // calls method below, but gives today's date
@@ -102,8 +102,8 @@ public class BBCalendar {
 
   /* 3) displays all the meetings the user has for a given day in a nice
   organized way (from earliest meeting to the latest).*/
-  public static void displayUsersCalendarForGivenDay(Long userID, Date calendarDay) {
-    Profile user = Profile.getUser(userID);
+  public void displayUsersCalendarForGivenDay(Long userID, Date calendarDay) {
+    Profile user = Profile.getUser(userID); // !!!! BROKEN, NEED TO MERGE FOR IT TO WORK !!
     calendarDay = getPlainDate(calendarDay);
     // In case the date given has a set time, we reset it
     ArrayList<Meeting> allMeetings = user.calendar.get(calendarDay);
@@ -121,27 +121,27 @@ public class BBCalendar {
 
   }
 
-  
 
   /* 4) a method which prints out all available time slots for a user to put a
   meeting in. It has to start at or after earliestTime and finish at or before
   latestTime. Moreover, it should take the amount of time given in timeInterval.
   */
-  public static void meetingTimeSuggestion(Long organisingUser, Date calendarDay, String earliestTime, String latestTime, int timeInterval) {
+  public void meetingTimeSuggestion(Long organisingUser, Date calendarDay, String earliestTime, String latestTime, int timeInterval) {
     // Uses method 5, the same way method 2 uses method 3
     meetingTimeScheduler(new Long[]{organisingUser}, calendarDay, earliestTime, latestTime, timeInterval);
 
   }
 
+
   /* 5) similar method as meetingTimeSuggestion, but instead of checking only one user
 availability, you should check all users in the given list and print out available times only if a
 time slot is available for all of the users. */
-  public static void meetingTimeScheduler(Long[] listOfuserID, Date calendarDay, String earliestTime, String latestTime, int timeInterval) {
+  public void meetingTimeScheduler(Long[] listOfuserID, Date calendarDay, String earliestTime, String latestTime, int timeInterval) {
     // Assumptions:
     // Time interval = number of hours so half an hour = 0.5, an hour = 1, etc.
     // Assume times are strings in 24 hour format e.g. 9:00, 14:30
+    // Assume start and end is always at :00 or :30
     
-
     // Earliest and latest time that we can start a meeting, in minutes
     Integer start = parseTime(earliestTime);
     Integer end = parseTime(latestTime) - (timeInterval*60);
