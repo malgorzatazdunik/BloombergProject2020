@@ -23,22 +23,6 @@ public class Story {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		this.date = formatter.format(date);
 	}
-
-	String getAuthor() {
-		return author;
-	}
-
-	String getTitle() {
-		return title;
-	}
-
-	String getContent() {
-		return content;
-	}
-
-	String[] getTags() {
-		return tags;
-	}
 	
 	void read() {
 		this.timesRead++;
@@ -49,10 +33,6 @@ public class Story {
 		return timesRead;
 	}
 	
-	String getDate() {
-		
-		return date;
-	}
 	
 	public void printStory() {
 		System.out.println("Author: " + author + ", Title: " + title + ", Views: " + timesRead);
