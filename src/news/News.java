@@ -2,7 +2,6 @@ package news;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -22,14 +21,7 @@ public class News {
 		@Override
 		public int compare(Integer i1, Integer i2) {
 			// TODO Auto-generated method stub
-			if (stories.getStory(i1).getTimesRead() > stories.getStory(i2).getTimesRead())
-			{
-				return -1;
-			}
-			else 
-			{
-				return 1;
-			}
+			return stories.getStory(i2).getTimesRead() - stories.getStory(i1).getTimesRead();
 		}
 		
 	});
@@ -149,8 +141,8 @@ public class News {
 			@Override
 			public int compare(Integer i1, Integer i2) {
 				// TODO Auto-generated method stub
-				if (matches.get(i1) > matches.get(i2)) return -1;
-				else return 1;
+				return (matches.get(i2) - matches.get(i1));
+				
 			}
 			
 		});
