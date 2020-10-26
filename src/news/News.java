@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class News {
 	
@@ -15,6 +16,23 @@ public class News {
 	private final Map<String, List<Integer>> authorsMap = new HashMap<>();
 	
 	private final Map<String, List<Integer>> tagsMap = new HashMap<>();
+	
+	private final PriorityQueue<Integer> mostRead = new PriorityQueue<>(new Comparator<Integer>() {
+
+		@Override
+		public int compare(Integer i1, Integer i2) {
+			// TODO Auto-generated method stub
+			if (stories.getStory(i1).getTimesRead() > stories.getStory(i2).getTimesRead())
+			{
+				return -1;
+			}
+			else 
+			{
+				return 1;
+			}
+		}
+		
+	});
 	
 	
 	public void addStory(String author, String title, String text, String[] tags) {
@@ -59,6 +77,11 @@ public class News {
 		if (stories.getStory(storyID) != null)
 		{
 			stories.getStory(storyID).read();
+			if (!mostRead.contains(storyID)) mostRead.add(storyID);
+			else {
+				mostRead.remove(storyID);
+				mostRead.add(storyID);
+			}
 		}
 
 	}
@@ -67,31 +90,19 @@ public class News {
 	{
 		System.out.println("****************************** TOP 10 NEWS ******************************" + "\n");
 		
-		/*
-		 * Create a list from keySet of stories, and sort it by corresponding numbers of times read from story object
-		 */
-		List<Integer> mostRead = new ArrayList<Integer>(stories.getKeySet());
+		List<Integer> helperList = new ArrayList<>();
 		
-		Collections.sort(mostRead, new Comparator<Integer>() {
-			public int compare(Integer left, Integer right)
-			{
-				int compare = stories.getStory(left).getTimesRead() - stories.getStory(right).getTimesRead();
-				if (compare == 0) return left.compareTo(right);
-				return compare;
-			}
-		});
-		
-		/*
-		 * print the last ten stories (that were read the most often)
-		 */
-		int i = mostRead.size()-1;
-		while (i >= 0)
+		int i = 0;
+		while (i < 10 && !mostRead.isEmpty())
 		{
-			int index = mostRead.get(i);
-			stories.getStory(index).printStory();	
-			--i;
-			if (i == mostRead.size()-11) break;
+			int head = mostRead.poll();
+			stories.getStory(head).printStory();
+			helperList.add(head);
+			++i;
 		}
+		
+		// add elements back to the priority queue
+		for (int j: helperList) mostRead.add(j);
 	}
 	
 	public void displayStoriesForAuthor(String author)
@@ -110,8 +121,7 @@ public class News {
 		System.out.println("****************** STORIES WITH TAGS: " + Arrays.toString(tags)+" ******************\n");
 		// key = storyID, value = num of matches
 		Map<Integer, Integer> matches = new HashMap<>();
-		
-		
+	
 		/*
 		 * for each tag, check the map of tags for ids of stories; Every time the story is already in the map of matches, 
 		 * add to the number of matches
@@ -134,30 +144,29 @@ public class News {
 			}
 		}
 		
-		/*
-		 * Add all story Ids to the list, and sort it by corresponding values from the matches map (number of tags matched)
-		 */
-		
-		List<Integer> matchedStoriesList = new ArrayList<Integer>(matches.keySet());
-		
-		Collections.sort(matchedStoriesList, new Comparator<Integer>() {
-			public int compare(Integer left, Integer right)
-			{
-				int compare = matches.get(left) - matches.get(right);
-				if (compare == 0) return left.compareTo(right);
-				return compare;
+		PriorityQueue<Integer> matchedStories = new PriorityQueue<>(new Comparator<Integer>() {
+
+			@Override
+			public int compare(Integer i1, Integer i2) {
+				// TODO Auto-generated method stub
+				if (matches.get(i1) > matches.get(i2)) return -1;
+				else return 1;
 			}
+			
 		});
+		
+		matchedStories.addAll(matches.keySet());
 			
 		
 		/*
-		 * Print the list in reverse (the most matched stories in the beginning
+		 * Print the list (the most matched stories in the beginning)
 		 */
-		
-		for (int i = matchedStoriesList.size()-1; i >= 0; i--)
+		while (!matchedStories.isEmpty())
 		{
-			stories.getStory(matchedStoriesList.get(i)).printStory();
+			int head = matchedStories.poll();
+			stories.getStory(head).printStory();
 		}
+		
 		
 
 	}

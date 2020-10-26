@@ -24,32 +24,32 @@ public class Story {
 		this.date = formatter.format(date);
 	}
 
-	public String getAuthor() {
+	String getAuthor() {
 		return author;
 	}
 
-	public String getTitle() {
+	String getTitle() {
 		return title;
 	}
 
-	public String getContent() {
+	String getContent() {
 		return content;
 	}
 
-	public String[] getTags() {
+	String[] getTags() {
 		return tags;
 	}
 	
-	public void read() {
+	void read() {
 		this.timesRead++;
 	}
 	
-	public int getTimesRead()
+	int getTimesRead()
 	{
 		return timesRead;
 	}
 	
-	public String getDate() {
+	String getDate() {
 		
 		return date;
 	}

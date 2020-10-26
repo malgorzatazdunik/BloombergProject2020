@@ -11,11 +11,11 @@ public class StoryCollection {
 	
 	private final Map<Integer, Story> storiesMap;
 	
-	public StoryCollection(){
+	StoryCollection(){
 		this.storiesMap = new HashMap<>();
 	}
 	
-	int nextID() 
+	private int nextID() 
 	{
 		return storiesMap.keySet().stream().mapToInt(n -> n).max().orElse(-1) + 1;
 	}

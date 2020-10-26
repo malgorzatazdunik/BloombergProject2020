@@ -5,9 +5,9 @@ public class Main {
 	{
 		News news = new News();
 		
-		news.addStory("Malgorzata", "Coding", "ABC", new String[] {"happy", "sad"});
-		news.addStory("Joanna", "Painting", "DEF", new String[] {"art", "work"});
-		news.addStory("Kat", "Cooking", "GHI", new String[] {"work", "food", "hobby"});
+		news.addStory("Malgorzata", "Coding", "ABC", new String[] {"happy"});
+		news.addStory("Joanna", "Painting", "DEF", new String[] {"art", "work", "happy"});
+		news.addStory("Kat", "Cooking", "GHI", new String[] {"work", "happy", "food"});
 		news.addStory("Michael", "Hello World", "JKL", new String[] {"code", "hobby", "lala"});
 		news.addStory("Stephen King", "Green Mile", "TEXT OF GREEN MILE", new String[] {"art", "fiction", "horror", "books"});
 		news.addStory("THEROUX", "WEIRD WEEKENDS", "TV SHOW LOUIS THEORUX BLAH BLAH", new String[] {"theroux", "tv", "BBC"});
@@ -34,11 +34,17 @@ public class Main {
 		news.markStoryAsRead(8);
 		news.markStoryAsRead(9);
 		news.markStoryAsRead(10);
+		news.markStoryAsRead(10);
+		news.markStoryAsRead(10);
+		news.markStoryAsRead(10);
+		news.markStoryAsRead(10);
 		
 		
-		news.displayTopTenNews();
+		//news.displayTopTenNews();
+		//System.out.println("HERE");
+		//news.displayTopTenNews();
 		//news.displayStoriesForAuthor("Michael");
-		//news.displayStoriesForTags(new String[] {"hobby", "code", "lala"});
+		news.displayStoriesForTags(new String[] {"work", "hobby", "code"});
 		
 		
 	}
