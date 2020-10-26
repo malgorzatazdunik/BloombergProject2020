@@ -15,20 +15,40 @@ public class Stock {
     securities.put(securityID, security);
   }
 
+  private Security getSecurity(long securityID) throws ClassNotFoundException {
+    try {
+      return securities.get(securityID);
+    } catch (Exception e) {
+      throw new ClassNotFoundException();
+    }
+  }
+
   public void addTick(long securityID, double price, Timestamp timestamp) {
-    securities.get(securityID).insertPrice(timestamp, price);
+    try {
+      securities.get(securityID).insertPrice(timestamp, price);
+    } catch (Exception ignored) {}
   }
 
   public double allTimeHigh(long securityID) {
-    return securities.get(securityID).getHighestPrice();
+    try {
+      return securities.get(securityID).getHighestPrice();
+    } catch (Exception e) {
+      return -1;
+    }
   }
 
   public double allTimeLow(long securityID) {
-    return securities.get(securityID).getLowestPrice();
+    try {
+      return securities.get(securityID).getLowestPrice();
+    } catch (Exception e) {
+      return -1;
+    }
   }
 
   public void getAllPriceHistory(long securityID, Timestamp startTime, Timestamp endTime) {
-    securities.get(securityID).getPriceHistory(startTime, endTime);
+    try {
+      securities.get(securityID).getPriceHistory(startTime, endTime);
+    } catch (Exception ignored) {}
   }
 
   public static void main(String[] args) {
